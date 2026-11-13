@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.pyo
+*.so
+*.o
+*.d
+native/surdata_transfer_selftest
+.cache/

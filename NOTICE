@@ -1,0 +1,15 @@
+SurCache
+Copyright 2026 SurData
+
+This product includes a direct vLLM KV connector written by SurData.
+It is designed to run beside:
+
+- vLLM, Copyright the vLLM authors and contributors, Apache License 2.0
+  https://github.com/vllm-project/vllm
+- LMCache, Copyright the LMCache authors and contributors, Apache License 2.0
+  https://github.com/LMCache/LMCache
+
+The LMCache-path engine maintained by SurData is published separately:
+https://github.com/SurData-io/lmcache
+
+surdata-sdk and the SurFile data path are not part of this repository.
