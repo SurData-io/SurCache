@@ -5,7 +5,7 @@ SurCache 是 SurData 里、`surdata-sdk` 以外的 KV Cache 层。推理引擎�
 - **LMCache 路径**已经单独开源：[SurData-io/lmcache](https://github.com/SurData-io/lmcache)。那是 LMCache 0.5.3 的 Apache-2.0 分叉，加上页直写的 GDS 路径。描述里写明 SDK 保持闭源。
 - **直连路径**在本仓库的 `python/surdata_vllm` 和 `native/`。vLLM 0.33 的 `KVConnectorBase_V1` 实现是 `SurDataKVConnector`。调度只投递工作，主机与 GPU 之间的搬运在连接器自己的线程里做。这条路径不 `import lmcache`。
 
-论文在 [PAPER.md](PAPER.md)。
+论文在 [PAPER.md](PAPER.md)。它只写一件事：搬运拆成七条主机线程和三条 CUDA 流，彼此不等。拷贝流只等生产这块数据的 event，计算流不回头等拷贝。
 
 ## 不在本仓库里的部分
 
@@ -29,12 +29,13 @@ Python 导入名仍是 `surdata_vllm`。论文和仓库名用 SurCache，避免�
 
 ## 已完成
 
-- 论文：问题、两条路径、调度与搬运、分口径的实测。
+- 论文：七条主机线程、计算流 / D2H 流 / H2D 流，以及谁不等谁。
 - 直连连接器源码：Python 包、单测、`libsurdata_transfer` 的 C++ 源。
 - Apache-2.0 许可和 `NOTICE`。
 
 ## 尚未完成
 
-- 直连路径还没有一次「外部前缀命中率非 0、并且综合 tok/s 高于同协议不存」的 800×2。论文里把命中为 0 的跑次单独标出。
+- 生产保存走 torch 的 store 流。传输库里的 D2H 流还在，生产路径不提交给它。
+- `per_layer` 仍让 D2H 流等待整条计算流。只等本步 event 的是 `end`。
 - 本仓库不包含可运行的 SDK，也不能代替 SurFile。
 - 导入名还没有改成 `surcache`。改名会打断现有的 `kv_connector_module_path`。
